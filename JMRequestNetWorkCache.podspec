@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
     s.authors      = {'leijianmin': 'ljm774256119@gamil.com'}
     s.platform     = :ios, '7.0'
     s.source       = {:git => 'https://github.com/leijianmin/JMRequestNetWorkCache.git', :tag => s.version}
-    s.source_files = 'JMRequestNetWorkCache/*.{h,m}'
+    s.source_files = 'JMNetWorkDemo/JMNetWorkTest/JMRequestNetWorkCache/*.{h,m}'
     s.dependency "AFNetworking", "~> 3.0"
     s.requires_arc = true
 end

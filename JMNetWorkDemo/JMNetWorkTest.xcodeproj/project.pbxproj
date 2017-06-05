@@ -14,8 +14,8 @@
 		506C95861DAE0245002D1151 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 506C95851DAE0245002D1151 /* Assets.xcassets */; };
 		506C95891DAE0245002D1151 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 506C95871DAE0245002D1151 /* LaunchScreen.storyboard */; };
 		506C95EE1DAE04D6002D1151 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 506C95ED1DAE04D6002D1151 /* libsqlite3.tbd */; };
-		50FD22A31EE528D7002BB838 /* JMRequestNetWorkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD22A21EE528D7002BB838 /* JMRequestNetWorkCache.m */; };
 		50FD22A71EE5296E002BB838 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD22A61EE5296E002BB838 /* Reachability.m */; };
+		50FD22AB1EE567EF002BB838 /* JMRequestNetWorkCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 50FD22AA1EE567EF002BB838 /* JMRequestNetWorkCache.m */; };
 		E064CEFB062A077C54BB5EF8 /* libPods-JMNetWorkTest.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 956163D57791E2B557673676 /* libPods-JMNetWorkTest.a */; };
 /* End PBXBuildFile section */
 
@@ -32,10 +32,10 @@
 		506C95881DAE0245002D1151 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		506C958A1DAE0245002D1151 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		506C95ED1DAE04D6002D1151 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
-		50FD22A11EE528D7002BB838 /* JMRequestNetWorkCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JMRequestNetWorkCache.h; sourceTree = "<group>"; };
-		50FD22A21EE528D7002BB838 /* JMRequestNetWorkCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMRequestNetWorkCache.m; sourceTree = "<group>"; };
 		50FD22A51EE5296E002BB838 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		50FD22A61EE5296E002BB838 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
+		50FD22A91EE567EF002BB838 /* JMRequestNetWorkCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JMRequestNetWorkCache.h; sourceTree = "<group>"; };
+		50FD22AA1EE567EF002BB838 /* JMRequestNetWorkCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JMRequestNetWorkCache.m; sourceTree = "<group>"; };
 		956163D57791E2B557673676 /* libPods-JMNetWorkTest.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JMNetWorkTest.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EBD1156A2915DDCF0DD34CA1 /* Pods-JMNetWorkTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JMNetWorkTest.release.xcconfig"; path = "Pods/Target Support Files/Pods-JMNetWorkTest/Pods-JMNetWorkTest.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -99,9 +99,8 @@
 		506C95911DAE026F002D1151 /* Demo */ = {
 			isa = PBXGroup;
 			children = (
+				50FD22A81EE567EF002BB838 /* JMRequestNetWorkCache */,
 				50FD22A41EE5296E002BB838 /* NetworkStatus */,
-				50FD22A11EE528D7002BB838 /* JMRequestNetWorkCache.h */,
-				50FD22A21EE528D7002BB838 /* JMRequestNetWorkCache.m */,
 			);
 			name = Demo;
 			sourceTree = "<group>";
@@ -122,6 +121,15 @@
 				50FD22A61EE5296E002BB838 /* Reachability.m */,
 			);
 			path = NetworkStatus;
+			sourceTree = "<group>";
+		};
+		50FD22A81EE567EF002BB838 /* JMRequestNetWorkCache */ = {
+			isa = PBXGroup;
+			children = (
+				50FD22A91EE567EF002BB838 /* JMRequestNetWorkCache.h */,
+				50FD22AA1EE567EF002BB838 /* JMRequestNetWorkCache.m */,
+			);
+			path = JMRequestNetWorkCache;
 			sourceTree = "<group>";
 		};
 		5D2DA63AA95C9069658C0E80 /* Pods */ = {
@@ -257,8 +265,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				50FD22A71EE5296E002BB838 /* Reachability.m in Sources */,
+				50FD22AB1EE567EF002BB838 /* JMRequestNetWorkCache.m in Sources */,
 				506C95811DAE0245002D1151 /* ViewController.m in Sources */,
-				50FD22A31EE528D7002BB838 /* JMRequestNetWorkCache.m in Sources */,
 				506C957E1DAE0245002D1151 /* AppDelegate.m in Sources */,
 				506C957B1DAE0245002D1151 /* main.m in Sources */,
 			);
