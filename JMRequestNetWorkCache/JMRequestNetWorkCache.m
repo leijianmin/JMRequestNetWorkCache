@@ -1,12 +1,12 @@
 //
-//  JMHttpRequestMethod.m
+//  JMRequestNetWorkCache.m
 //  ssss
 //
 //  Created by 雷建民 on 16/9/25.
 //  Copyright © 2016年 雷建民. All rights reserved.
 //
 
-#import "JMHttpRequestMethod.h"
+#import "JMRequestNetWorkCache.h"
 #import "YTKKeyValueStore.h"
 #import "AFHTTPSessionManager.h"
 #import "Reachability.h"
@@ -31,23 +31,23 @@ typedef NS_ENUM(NSUInteger, JMNetworkStatus) {
 };
 
 
-@interface JMHttpRequestMethod ()
+@interface JMRequestNetWorkCache ()
 @end
 
-@implementation JMHttpRequestMethod
+@implementation JMRequestNetWorkCache
 
 static NSString *const  httpCache = @"NetworkCache";
 static YTKKeyValueStore *_store;
 static NSString         *_baseUrl;
 static AFHTTPSessionManager *manager;
-static JMHttpRequestMethod *sharedMethod;
+static JMRequestNetWorkCache *sharedMethod;
 
-+ (JMHttpRequestMethod *)sharedMethod
++ (JMRequestNetWorkCache *)sharedMethod
 {
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedMethod = [[JMHttpRequestMethod alloc]init];
+        sharedMethod = [[JMRequestNetWorkCache alloc]init];
         manager = [AFHTTPSessionManager manager];
     });
     return sharedMethod;
@@ -103,7 +103,7 @@ static JMHttpRequestMethod *sharedMethod;
 {
     _store = [[YTKKeyValueStore alloc] initDBWithName:httpCache];
     [_store createTableWithName:httpCache];
-    [JMHttpRequestMethod updateBaseUrl:BaseURL];//设置 baseurl
+    [JMRequestNetWorkCache updateBaseUrl:BaseURL];//设置 baseurl
 }
 
 + (AFHTTPSessionManager *)manager
@@ -124,7 +124,7 @@ static JMHttpRequestMethod *sharedMethod;
                                                          @"text/xml",
                                                          @"image/*",
                                                          @"multipart/form-data",nil];
-    [JMHttpRequestMethod sharedMethod].isDebug = YES;
+    [JMRequestNetWorkCache sharedMethod].isDebug = YES;
     return manager;
 }
 
@@ -250,7 +250,7 @@ static JMHttpRequestMethod *sharedMethod;
         NSArray *childerFiles=[fileManager subpathsAtPath:PATH_OF_NetWork];
         for (NSString *fileName in childerFiles) {
             NSString *absolutePath=[PATH_OF_NetWork stringByAppendingPathComponent:fileName];
-            folderSize += [JMHttpRequestMethod fileSizeAtPath:absolutePath];
+            folderSize += [JMRequestNetWorkCache fileSizeAtPath:absolutePath];
         }
         //SDWebImage框架自身计算缓存的实现
         //folderSize+=[[SDImageCache sharedImageCache] getSize]/1024.0/1024.0;
@@ -314,7 +314,7 @@ static JMHttpRequestMethod *sharedMethod;
                fail:(void(^)(NSError *error))fail
 {
     
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     NSString *requestURL = [self setRequestURLWithPath:url];
     if (!requestURL || requestURL.length == 0) { NSLog(@"url is not exist"); return ; }
     // https 验证 manager.securityPolicy = [sharedMethod getCustomHttpsPolicy:manager];
@@ -325,8 +325,8 @@ static JMHttpRequestMethod *sharedMethod;
         }else {
             NSDictionary *dict =   [_store getObjectById:requestURL  fromTable:httpCache];
             if (dict) {
-               if ([JMHttpRequestMethod sharedMethod].isDebug)  NSLog(@"取出本地缓存成功dic = %@",dict);
-                [JMHttpRequestMethod sharedMethod].isLoading = NO;
+               if ([JMRequestNetWorkCache sharedMethod].isDebug)  NSLog(@"取出本地缓存成功dic = %@",dict);
+                [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                 success(dict);
             }else {
                 [ manager GET:requestURL parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
@@ -334,10 +334,10 @@ static JMHttpRequestMethod *sharedMethod;
                 } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                     [_store putObject:responseObject withId:requestURL intoTable:httpCache];
                     success(responseObject);
-                    if ([JMHttpRequestMethod sharedMethod].isDebug) NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
+                    if ([JMRequestNetWorkCache sharedMethod].isDebug) NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
                     fail(error);
-                 if ([JMHttpRequestMethod sharedMethod].isDebug)  NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
+                 if ([JMRequestNetWorkCache sharedMethod].isDebug)  NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
                 }];
             }
         }
@@ -346,7 +346,7 @@ static JMHttpRequestMethod *sharedMethod;
         if (dict) {
             success(dict);
         }else {
-           if ([JMHttpRequestMethod sharedMethod].isDebug)  NSLog(@"当前为无网络状态，本地也没有缓存数据");
+           if ([JMRequestNetWorkCache sharedMethod].isDebug)  NSLog(@"当前为无网络状态，本地也没有缓存数据");
         }
     }
 }
@@ -368,7 +368,7 @@ static JMHttpRequestMethod *sharedMethod;
             success:(void(^)(id responseObject))success
                fail:(void(^)(NSError *error))fail
 {
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     NSString *requestURL = [self setRequestURLWithPath:url];
     if (!requestURL || requestURL.length == 0) { NSLog(@"url is not exist"); return ; }
     manager.securityPolicy = [sharedMethod getCustomHttpsPolicy:manager];
@@ -378,33 +378,33 @@ static JMHttpRequestMethod *sharedMethod;
         }else {
             NSDictionary *dict =   [_store getObjectById:requestURL  fromTable:httpCache];
             if (dict) {
-              if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"取出本地缓存成功dic = %@",dict);
+              if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"取出本地缓存成功dic = %@",dict);
                 success(dict);
             }else {
                 [manager POST:requestURL parameters:params progress:^(NSProgress * _Nonnull downloadProgress) {
                     progress(downloadProgress.completedUnitCount, downloadProgress.totalUnitCount);
                 } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
                     [_store putObject:responseObject withId:requestURL intoTable:httpCache];
-                    [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                    [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                     success(responseObject);
-                  if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
+                  if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
                 } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                    [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                    [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                     fail(error);
-                  if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
+                  if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
                 }];
             }
         }
     }else {
         NSDictionary *dict =   [_store getObjectById:requestURL  fromTable:httpCache];
         if (dict) {
-            [JMHttpRequestMethod sharedMethod].isLoading = NO;
+            [JMRequestNetWorkCache sharedMethod].isLoading = NO;
             success(dict);
         }else {
             NSError *error;
-            [JMHttpRequestMethod sharedMethod].isLoading = NO;
+            [JMRequestNetWorkCache sharedMethod].isLoading = NO;
             fail(error);
-           if ([JMHttpRequestMethod sharedMethod].isDebug)  NSLog(@"当前为无网络状态，本地也没有缓存数据");
+           if ([JMRequestNetWorkCache sharedMethod].isDebug)  NSLog(@"当前为无网络状态，本地也没有缓存数据");
         }
     }
 }
@@ -433,24 +433,24 @@ static JMHttpRequestMethod *sharedMethod;
     if (httpMethod == 0) {
         [manager GET:url parameters:params progress:nil
              success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                 [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                 [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                  success(responseObject);
-               if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
+               if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
              } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                 [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                 [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                  fail(error);
-               if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
+               if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
              }];
     }else {
         [manager POST:url parameters:params progress:nil
               success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-                  [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                  [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                   success(responseObject);
-               if ([JMHttpRequestMethod sharedMethod].isDebug)    NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
+               if ([JMRequestNetWorkCache sharedMethod].isDebug)    NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",url,params,responseObject);
               } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-                  [JMHttpRequestMethod sharedMethod].isLoading = NO;
+                  [JMRequestNetWorkCache sharedMethod].isLoading = NO;
                   fail(error);
-                if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
+                if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest error, URL: %@\n params:%@\n error:%@",url,params,error.description);
               }];
         
     }
@@ -473,19 +473,19 @@ static JMHttpRequestMethod *sharedMethod;
             success:(void(^)(id responseObject))success
                fail:(void(^)(NSError *error))fail
 {
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     NSString *requestURL = [self setRequestURLWithPath:url];
     if (!requestURL || requestURL.length == 0) {
         NSLog(@"url is not exist");
         return ;
     }
     [ manager PUT:requestURL parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
         success(responseObject);
-      if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
+      if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
-      if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"request error = %@",error.description);
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
+      if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"request error = %@",error.description);
         fail(error);
     }];
 }
@@ -506,19 +506,19 @@ static JMHttpRequestMethod *sharedMethod;
                success:(void(^)(id responseObject))success
                   fail:(void(^)(NSError *error))fail
 {
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     NSString *requestURL = [self setRequestURLWithPath:url];
     if (!requestURL || requestURL.length == 0) {
         NSLog(@"url is not exist");
         return ;
     }
     [manager DELETE:requestURL parameters:params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
         success(responseObject);
-      if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
+      if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
-       if ([JMHttpRequestMethod sharedMethod].isDebug)  NSLog(@"request error = %@",error.description);
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
+       if ([JMRequestNetWorkCache sharedMethod].isDebug)  NSLog(@"request error = %@",error.description);
         fail(error);
     }];
 }
@@ -545,7 +545,7 @@ static JMHttpRequestMethod *sharedMethod;
                        fail:(void(^)(NSError *error))fail
 {
     NSString *requestURL = [self setRequestURLWithPath:url];
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     if (!requestURL || requestURL.length == 0) {
         NSLog(@"url is not exist");
         return ;
@@ -555,20 +555,20 @@ static JMHttpRequestMethod *sharedMethod;
         BOOL result  = [formData appendPartWithFileURL:[NSURL fileURLWithPath:fileUrl] name:name fileName:fileName mimeType:@"image/jpeg" error:&error];
         if (result) {
             NSLog(@"表单提交成功");
-         if ([JMHttpRequestMethod sharedMethod].isDebug)    NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@",fileUrl,name,fileName);
+         if ([JMRequestNetWorkCache sharedMethod].isDebug)    NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@",fileUrl,name,fileName);
         }else {
-         if ([JMHttpRequestMethod sharedMethod].isDebug)    NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@ , \n error = %@",fileUrl,name,fileName,error.description);
+         if ([JMRequestNetWorkCache sharedMethod].isDebug)    NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@ , \n error = %@",fileUrl,name,fileName,error.description);
         }
     } progress:^(NSProgress * _Nonnull uploadProgress) {
         NSLog(@"总进度 %lld  当前进度 %lld",uploadProgress.completedUnitCount,uploadProgress.totalUnitCount);
         
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
-      if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,param,responseObject);
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
+      if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,param,responseObject);
         success(responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
-     if ([JMHttpRequestMethod sharedMethod].isDebug)    NSLog(@"error = %@",error.description);
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
+     if ([JMRequestNetWorkCache sharedMethod].isDebug)    NSLog(@"error = %@",error.description);
         fail(error);
     }];
     
@@ -599,7 +599,7 @@ static JMHttpRequestMethod *sharedMethod;
                        fail:(void(^)(NSError *error))fail
 {
     NSString *requestURL = [self setRequestURLWithPath:url];
-    [JMHttpRequestMethod sharedMethod].isLoading = YES;
+    [JMRequestNetWorkCache sharedMethod].isLoading = YES;
     if (!requestURL || requestURL.length == 0) {
         NSLog(@"url is not exist");
         return ;
@@ -609,7 +609,7 @@ static JMHttpRequestMethod *sharedMethod;
             BOOL result  =  [formData appendPartWithFileURL:[NSURL fileURLWithPath:urls[idx]] name:name[idx] fileName:fileName[idx] mimeType:mimeType error:nil];
             if (result) {
                 NSLog(@"表单提交成功");
-            if ([JMHttpRequestMethod sharedMethod].isDebug)     NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@, \n mineType = %@",urls,name,fileName,mimeType);
+            if ([JMRequestNetWorkCache sharedMethod].isDebug)     NSLog(@"\n urls = %@ \n name = %@ \n fileName = %@, \n mineType = %@",urls,name,fileName,mimeType);
             }else {
                 NSLog(@"表单提交成功");
             }
@@ -618,11 +618,11 @@ static JMHttpRequestMethod *sharedMethod;
         NSLog(@"总进度 %lld  当前进度 %lld",uploadProgress.completedUnitCount,uploadProgress.totalUnitCount);
         progress(uploadProgress.completedUnitCount, uploadProgress.totalUnitCount);
     } success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
-      if ([JMHttpRequestMethod sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
+      if ([JMRequestNetWorkCache sharedMethod].isDebug)   NSLog(@"\nRequest success, URL: %@\n params:%@\n response:%@\n\n",requestURL,params,responseObject);
         success(responseObject);
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-        [JMHttpRequestMethod sharedMethod].isLoading = NO;
+        [JMRequestNetWorkCache sharedMethod].isLoading = NO;
         NSLog(@"error = %@",error.description);
         fail(error);
     }];

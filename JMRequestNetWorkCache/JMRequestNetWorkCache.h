@@ -1,5 +1,5 @@
 //
-//  JMHttpRequestMethod.h
+//  JMRequestNetWorkCache.h
 //  ssss
 //
 //  Created by 雷建民 on 16/9/25.
@@ -14,7 +14,7 @@
  *详情请见 https://github.com/yuantiku/YTKKeyValueStore
  *对该类如有疑问可以拉个issues
  */
-@interface JMHttpRequestMethod : NSObject
+@interface JMRequestNetWorkCache : NSObject
 
 typedef NS_ENUM(NSUInteger, JMRequestSerializer) {
     JMRequestSerializerJSON,     // 设置请求数据为JSON格式
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSUInteger, JMResponseSerializer) {
  
  @return self
  */
-+ (JMHttpRequestMethod *)sharedMethod;
++ (JMRequestNetWorkCache *)sharedMethod;
 
 
 
